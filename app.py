@@ -7,9 +7,10 @@ st.set_page_config(
 )
 
 
-@st.cache_data
+@st.cache_data(ttl=600)
 def load_data():
-  df = pd.read_csv("people_data.csv")
+  sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRdR30A6c3cRpzS_yBSPP_LHWaRNE0YinscZfVf6xWeJfqjdvpPG_2JcVnTKp7dfUkl5NjR170Q1-lo/pub?output=csv"
+  df = pd.read_csv(sheet_url)
   df.columns = df.columns.str.strip().str.lstrip("\ufeff")
   return df
 
@@ -17,10 +18,15 @@ def load_data():
 df = load_data()
 
 st.title("📇 Group Directory & Interactive SOS")
-st.markdown("Cross-platform directory with quick navigation, communication, and medical emergency details.")
+st.markdown(
+    "Cross-platform directory with quick navigation, communication, and medical"
+    " emergency details."
+)
 
 st.sidebar.header("Navigation & Filters")
-app_mode = st.sidebar.radio("Select Mode", ["Directory", "Submit Update / Feedback"])
+app_mode = st.sidebar.radio(
+    "Select Mode", ["Directory", "Submit Update / Feedback"]
+)
 
 if app_mode == "Directory":
   search_query = st.sidebar.text_input("Search by Name or Notes")
@@ -36,7 +42,10 @@ if app_mode == "Directory":
 
   if favorite_filter and "Is Favorite" in filtered_df.columns:
     filtered_df = filtered_df[
-        filtered_df["Is Favorite"].astype(str).str.upper().isin(["TRUE", "1", "YES"])
+        filtered_df["Is Favorite"]
+        .astype(str)
+        .str.upper()
+        .isin(["TRUE", "1", "YES"])
     ]
 
   if filtered_df.empty:
@@ -61,8 +70,12 @@ if app_mode == "Directory":
 
           phone = row.get("Phone Number", "")
           st.markdown(f"**Phone:** [{phone}](tel:{phone})")
-          st.markdown(f"**WhatsApp Chat:** [Open Chat]({row.get('WhatsApp Chat', '#')})")
-          st.markdown(f"**WhatsApp Call:** [Voice Call](tel:{row.get('WhatsApp Call', '')})")
+          st.markdown(
+              f"**WhatsApp Chat:** [Open Chat]({row.get('WhatsApp Chat', '#')})"
+          )
+          st.markdown(
+              f"**WhatsApp Call:** [Voice Call](tel:{row.get('WhatsApp Call', '')})"
+          )
 
           ig_handle = str(row.get("Instagram", "")).strip()
           ig_url = (
@@ -76,8 +89,12 @@ if app_mode == "Directory":
 
           st.markdown(f"**Instagram:** [{ig_handle}]({ig_url})")
           st.markdown(f"**Facebook:** [Open Profile]({fb_url})")
-          st.markdown(f"**Website:** [{row.get('Website', '')}]({row.get('Website', '#')})")
-          st.markdown(f"**Email:** [{row.get('Email', '')}](mailto:{row.get('Email', '')})")
+          st.markdown(
+              f"**Website:** [{row.get('Website', '')}]({row.get('Website', '#')})"
+          )
+          st.markdown(
+              f"**Email:** [{row.get('Email', '')}](mailto:{row.get('Email', '')})"
+          )
 
         with col2:
           st.subheader("🚨 Medical Emergency & SOS")
@@ -97,13 +114,17 @@ if app_mode == "Directory":
 
         st.markdown("---")
         st.markdown(
-            f"*Additional Notes:* {row.get('Notes', '')} | *Timezone:* {row.get('Timezone', '')}"
+            f"*Additional Notes:* {row.get('Notes', '')} | *Timezone:*"
+            f" {row.get('Timezone', '')}"
         )
 
 elif app_mode == "Submit Update / Feedback":
   st.header("📝 Request an Entry Update or Addition")
   st.markdown(
-      "Use the form below to submit modifications or add new members. Please sign in with your verified email address when prompted."
+      "Use the form below to submit modifications or add new members. Please"
+      " sign in with your verified email address when prompted."
   )
-  google_form_embed_url = "https://docs.google.com/forms/d/e/YOUR_FORM_EMBED_ID/viewform?embedded=true"
+  google_form_embed_url = (
+      "https://docs.google.com/forms/d/e/YOUR_FORM_EMBED_ID/viewform?embedded=true"
+  )
   st.components.v1.iframe(google_form_embed_url, height=800, scrolling=True)
