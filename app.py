@@ -144,7 +144,7 @@ elif app_mode == "Submit Update / Feedback":
         - **Medications:** None
         - **Emergency Contact Name & Relationship:** Priya Sharma (Spouse)
         - **Emergency Contact Phone:** +91-98765-43211
-        - **Birthday & Timezone:** 1988-06-15 / Asia/Kolkata
+        - **Birthday & Timezone:** 15-06-1988 / West Bengal/Kolkata
         - **Notes:** Prefers WhatsApp messages over calls.
         """)
 
