@@ -10,95 +10,120 @@ st.set_page_config(
 
 @st.cache_data
 def load_data():
-  return pd.read_csv("people_data.csv")
+  df = pd.read_csv("people_data.csv")
+  # Clean column names to remove any hidden spaces or BOM characters
+  df.columns = df.columns.str.strip().str.lstrip("\ufeff")
+  return df
 
 
 df = load_data()
 
 st.title("📇 Group Directory & Interactive SOS")
-st.markdown("Cross-platform directory with quick navigation, communication, and medical emergency details.")
+st.markdown(
+    "Cross-platform directory with quick navigation, communication, and medical"
+    " emergency details."
+)
 
 # Sidebar Navigation and Filters
 st.sidebar.header("Navigation & Filters")
-app_mode = st.sidebar.radio("Select Mode", ["Directory", "Submit Update / Feedback"])
+app_mode = st.sidebar.radio(
+    "Select Mode", ["Directory", "Submit Update / Feedback"]
+)
 
 if app_mode == "Directory":
   search_query = st.sidebar.text_input("Search by Name or Notes")
   favorite_filter = st.sidebar.checkbox("Show Favorites Only", value=False)
 
   filtered_df = df.copy()
-  if search_query:
-    filtered_df = filtered_df[
-        filtered_df["Full Name"]
-        .str.contains(search_query, case=False, na=False)
-        | filtered_df["Notes"].str.contains(search_query, case=False, na=False)
-    ]
 
-  if favorite_filter:
+  # Ensure columns exist before filtering
+  name_col = (
+      "Full Name" if "Full Name" in filtered_df.columns else filtered_df.columns[1]
+  )
+  notes_col = "Notes" if "Notes" in filtered_df.columns else None
+  fav_col = "Is Favorite" if "Is Favorite" in filtered_df.columns else None
+
+  if search_query:
+    if notes_col:
+      filtered_df = filtered_df[
+          filtered_df[name_col].str.contains(search_query, case=False, na=False)
+          | filtered_df[notes_col].str.contains(
+              search_query, case=False, na=False
+          )
+      ]
+    else:
+      filtered_df = filtered_df[
+          filtered_df[name_col].str.contains(search_query, case=False, na=False)
+      ]
+
+  if favorite_filter and fav_col:
     filtered_df = filtered_df[
-        filtered_df["Is Favorite"].astype(str).str.upper() == "TRUE"
+        filtered_df[fav_col].astype(str).str.upper().isin(["TRUE", "1", "YES"])
     ]
 
   if filtered_df.empty:
     st.warning("No entries found matching your criteria.")
   else:
     for index, row in filtered_df.iterrows():
-      with st.expander(
-          f"👤 {row['Full Name']}  |  🩸 Blood Group: {row['Blood Group']}"
-      ):
+      name = row.get(name_col, "Member")
+      blood = row.get("Blood Group", "N/A")
+      with st.expander(f"👤 {name}  |  🩸 Blood Group: {blood}"):
         col1, col2 = st.columns(2)
 
         with col1:
           st.subheader("📞 Communication & Web")
 
-          # Address with Google Maps Link
-          address = row["Address"]
+          address = row.get("Address", "")
           maps_url = (
               f"https://www.google.com/maps/search/?api=1&query={urllib.parse.quote(str(address))}"
+              if address
+              else "#"
           )
           st.markdown(f"**Address:** [{address}]({maps_url})")
 
-          # Phone & WhatsApp
-          phone = row["Phone Number"]
+          phone = row.get("Phone Number", "")
           st.markdown(f"**Phone:** [{phone}](tel:{phone})")
-          st.markdown(f"**WhatsApp Chat:** [Open Chat]({row['WhatsApp Chat']})")
-          st.markdown(f"**WhatsApp Call:** [Voice Call](tel:{row['WhatsApp Call']})")
+          st.markdown(
+              f"**WhatsApp Chat:** [Open Chat]({row.get('WhatsApp Chat', '#')})"
+          )
+          st.markdown(
+              f"**WhatsApp Call:** [Voice Call](tel:{row.get('WhatsApp Call', '')})"
+          )
 
-          # Socials & Web
-          ig_handle = str(row["Instagram"]).strip()
+          ig_handle = str(row.get("Instagram", "")).strip()
           ig_url = (
               ig_handle
               if ig_handle.startswith("http")
               else f"https://instagram.com/{ig_handle.replace('@', '')}"
           )
 
-          fb_val = str(row["Facebook"]).strip()
+          fb_val = str(row.get("Facebook", "")).strip()
           fb_url = fb_val if fb_val.startswith("http") else f"https://{fb_val}"
 
           st.markdown(f"**Instagram:** [{ig_handle}]({ig_url})")
           st.markdown(f"**Facebook:** [Open Profile]({fb_url})")
-          st.markdown(f"**Website:** [{row['Website']}]({row['Website']})")
-          st.markdown(f"**Email:** [{row['Email']}](mailto:{row['Email']})")
+          st.markdown(f"**Website:** [{row.get('Website', '')}]({row.get('Website', '#')})")
+          st.markdown(f"**Email:** [{row.get('Email', '')}](mailto:{row.get('Email', '')})")
 
         with col2:
           st.subheader("🚨 Medical Emergency & SOS")
           st.error(f"""
-                - **Blood Group:** {row['Blood Group']}
+                - **Blood Group:** {row.get('Blood Group', 'N/A')}
                 - **Allergies:** {row.get('Allergies', 'None')}
                 - **Medical Conditions:** {row.get('Medical Conditions', 'None')}
                 - **Medications:** {row.get('Medications', 'None')}
                 """)
 
-          emerg_phone = row["Emergency Contact Phone"]
+          emerg_phone = row.get("Emergency Contact Phone", "")
           st.info(f"""
                 **Emergency Contact:**
-                - **Name:** {row['Emergency Contact Name']} ({row['Emergency Contact Relationship']})
+                - **Name:** {row.get('Emergency Contact Name', 'N/A')} ({row.get('Emergency Contact Relationship', '')})
                 - **Phone:** [{emerg_phone}](tel:{emerg_phone})
                 """)
 
         st.markdown("---")
         st.markdown(
-            f"*Additional Notes:* {row['Notes']} | *Timezone:* {row['Timezone']}"
+            f"*Additional Notes:* {row.get('Notes', '')} | *Timezone:* {row.get('Timezone', '')}"
         )
 
 elif app_mode == "Submit Update / Feedback":
@@ -107,6 +132,5 @@ elif app_mode == "Submit Update / Feedback":
       "Use the form below to submit modifications or add new members. Please sign in with your verified email address when prompted."
   )
 
-  # Replace with your actual Google Form embed URL
   google_form_embed_url = "https://docs.google.com/forms/d/e/YOUR_FORM_EMBED_ID/viewform?embedded=true"
   st.components.v1.iframe(google_form_embed_url, height=800, scrolling=True)
