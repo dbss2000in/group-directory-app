@@ -18,7 +18,7 @@ def load_data():
 
 df = load_data()
 
-st.title("📇 Group Directory & Interactive SOS")
+st.title("📇 Group Directory & Interactive SOS (India)")
 st.markdown(
     "Cross-platform directory with quick navigation, communication, and medical"
     " emergency details."
@@ -116,7 +116,7 @@ if app_mode == "Directory":
         st.markdown("---")
         st.markdown(
             f"*Additional Notes:* {row.get('Notes', '')} | *Timezone:*"
-            f" {row.get('Timezone', '')}"
+            f" {row.get('Timezone', 'Asia/Kolkata')}"
         )
 
 elif app_mode == "Submit Update / Feedback":
@@ -132,20 +132,20 @@ elif app_mode == "Submit Update / Feedback":
   ):
     st.markdown("""
         When requesting an update or addition, please include as many of the following fields as applicable:
-        - **Full Name:** John Doe
-        - **Address:** 123 Maple Street, Springfield, IL 62701
-        - **Phone Number:** +1-555-0101
-        - **WhatsApp Call / Chat:** +1-555-0101 or https://wa.me/15550101
-        - **Instagram / Facebook:** @johndoe_art / fb.com/johndoe
-        - **Email / Website:** john.doe@example.com / https://johndoe.design
+        - **Full Name:** Aarav Sharma
+        - **Address:** Flat 402, Lotus Apartments, MG Road, Bangalore 560001
+        - **Phone Number:** +91-98765-43210
+        - **WhatsApp Call / Chat:** +91-98765-43210 or https://wa.me/919876543210
+        - **Instagram / Facebook:** @aarav_sharma / fb.com/aaravsharma
+        - **Email / Website:** aarav.sharma@example.com / https://aaravsharma.dev
         - **Blood Group:** O+
-        - **Allergies:** Penicillin
-        - **Medical Conditions:** Asthma
-        - **Medications:** Inhaler as needed
-        - **Emergency Contact Name & Relationship:** Jane Doe (Spouse)
-        - **Emergency Contact Phone:** +1-555-0199
-        - **Birthday & Timezone:** 1985-04-12 / America/Chicago
-        - **Notes:** Prefers text over calls.
+        - **Allergies:** None
+        - **Medical Conditions:** None
+        - **Medications:** None
+        - **Emergency Contact Name & Relationship:** Priya Sharma (Spouse)
+        - **Emergency Contact Phone:** +91-98765-43211
+        - **Birthday & Timezone:** 1988-06-15 / Asia/Kolkata
+        - **Notes:** Prefers WhatsApp messages over calls.
         """)
 
   formspree_url = "https://formspree.io/f/xwlkpdwb"
@@ -158,7 +158,7 @@ elif app_mode == "Submit Update / Feedback":
         </div>
         <div style="margin-bottom: 15px;">
             <label style="display: block; font-weight: bold; margin-bottom: 5px;">Full Name (Member):</label>
-            <input type="text" name="full_name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="John Doe">
+            <input type="text" name="full_name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Aarav Sharma">
         </div>
         <div style="margin-bottom: 15px;">
             <label style="display: block; font-weight: bold; margin-bottom: 5px;">Update Details / New Information:</label>
