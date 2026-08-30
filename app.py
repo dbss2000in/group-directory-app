@@ -2,7 +2,6 @@ import urllib.parse
 import pandas as pd
 import streamlit as st
 
-# Page Configuration
 st.set_page_config(
     page_title="Group Directory & Medical SOS", page_icon="📇", layout="wide"
 )
@@ -11,7 +10,6 @@ st.set_page_config(
 @st.cache_data
 def load_data():
   df = pd.read_csv("people_data.csv")
-  # Clean column names to remove any hidden spaces or BOM characters
   df.columns = df.columns.str.strip().str.lstrip("\ufeff")
   return df
 
@@ -19,16 +17,10 @@ def load_data():
 df = load_data()
 
 st.title("📇 Group Directory & Interactive SOS")
-st.markdown(
-    "Cross-platform directory with quick navigation, communication, and medical"
-    " emergency details."
-)
+st.markdown("Cross-platform directory with quick navigation, communication, and medical emergency details.")
 
-# Sidebar Navigation and Filters
 st.sidebar.header("Navigation & Filters")
-app_mode = st.sidebar.radio(
-    "Select Mode", ["Directory", "Submit Update / Feedback"]
-)
+app_mode = st.sidebar.radio("Select Mode", ["Directory", "Submit Update / Feedback"])
 
 if app_mode == "Directory":
   search_query = st.sidebar.text_input("Search by Name or Notes")
@@ -36,36 +28,22 @@ if app_mode == "Directory":
 
   filtered_df = df.copy()
 
-  # Ensure columns exist before filtering
-  name_col = (
-      "Full Name" if "Full Name" in filtered_df.columns else filtered_df.columns[1]
-  )
-  notes_col = "Notes" if "Notes" in filtered_df.columns else None
-  fav_col = "Is Favorite" if "Is Favorite" in filtered_df.columns else None
-
   if search_query:
-    if notes_col:
-      filtered_df = filtered_df[
-          filtered_df[name_col].str.contains(search_query, case=False, na=False)
-          | filtered_df[notes_col].str.contains(
-              search_query, case=False, na=False
-          )
-      ]
-    else:
-      filtered_df = filtered_df[
-          filtered_df[name_col].str.contains(search_query, case=False, na=False)
-      ]
-
-  if favorite_filter and fav_col:
     filtered_df = filtered_df[
-        filtered_df[fav_col].astype(str).str.upper().isin(["TRUE", "1", "YES"])
+        filtered_df["Full Name"].str.contains(search_query, case=False, na=False)
+        | filtered_df["Notes"].str.contains(search_query, case=False, na=False)
+    ]
+
+  if favorite_filter and "Is Favorite" in filtered_df.columns:
+    filtered_df = filtered_df[
+        filtered_df["Is Favorite"].astype(str).str.upper().isin(["TRUE", "1", "YES"])
     ]
 
   if filtered_df.empty:
     st.warning("No entries found matching your criteria.")
   else:
     for index, row in filtered_df.iterrows():
-      name = row.get(name_col, "Member")
+      name = row["Full Name"]
       blood = row.get("Blood Group", "N/A")
       with st.expander(f"👤 {name}  |  🩸 Blood Group: {blood}"):
         col1, col2 = st.columns(2)
@@ -83,12 +61,8 @@ if app_mode == "Directory":
 
           phone = row.get("Phone Number", "")
           st.markdown(f"**Phone:** [{phone}](tel:{phone})")
-          st.markdown(
-              f"**WhatsApp Chat:** [Open Chat]({row.get('WhatsApp Chat', '#')})"
-          )
-          st.markdown(
-              f"**WhatsApp Call:** [Voice Call](tel:{row.get('WhatsApp Call', '')})"
-          )
+          st.markdown(f"**WhatsApp Chat:** [Open Chat]({row.get('WhatsApp Chat', '#')})")
+          st.markdown(f"**WhatsApp Call:** [Voice Call](tel:{row.get('WhatsApp Call', '')})")
 
           ig_handle = str(row.get("Instagram", "")).strip()
           ig_url = (
@@ -131,6 +105,5 @@ elif app_mode == "Submit Update / Feedback":
   st.markdown(
       "Use the form below to submit modifications or add new members. Please sign in with your verified email address when prompted."
   )
-
   google_form_embed_url = "https://docs.google.com/forms/d/e/YOUR_FORM_EMBED_ID/viewform?embedded=true"
   st.components.v1.iframe(google_form_embed_url, height=800, scrolling=True)
