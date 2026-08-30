@@ -12,6 +12,8 @@ def load_data():
   sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRdR30A6c3cRpzS_yBSPP_LHWaRNE0YinscZfVf6xWeJfqjdvpPG_2JcVnTKp7dfUkl5NjR170Q1-lo/pub?output=csv"
   df = pd.read_csv(sheet_url)
   df.columns = df.columns.str.strip().str.lstrip("\ufeff")
+  # Replace all NaN/blank values with 'None' for a cleaner UI
+  df = df.fillna("None")
   return df
 
 
@@ -63,7 +65,7 @@ if app_mode == "Directory":
           address = row.get("Address", "")
           maps_url = (
               f"https://www.google.com/maps/search/?api=1&query={urllib.parse.quote(str(address))}"
-              if address
+              if address != "None" and address
               else "#"
           )
           st.markdown(f"**Address:** [{address}]({maps_url})")
@@ -122,7 +124,8 @@ elif app_mode == "Submit Update / Feedback":
   st.header("📝 Request an Entry Update or Addition")
   st.markdown(
       "Fill out the form below to submit modifications or add new member"
-      " details. Submissions will be sent directly to your Formspree inbox."
+      " details. Submissions will be sent directly to the group"
+      " administrator."
   )
 
   formspree_url = "https://formspree.io/f/xwlkpdwb"
