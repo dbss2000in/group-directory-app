@@ -71,12 +71,23 @@ if app_mode == "Directory":
 
           phone = row.get("Phone Number", "")
           st.markdown(f"**Phone:** [{phone}](tel:{phone})")
-          st.markdown(
-              f"**WhatsApp Chat:** [Open Chat]({row.get('WhatsApp Chat', '#')})"
+
+          # Clean WhatsApp numbers for deep linking
+          wa_chat = str(row.get("WhatsApp Chat", "")).strip()
+          if not wa_chat.startswith("http"):
+            wa_digits = "".join(filter(str.isdigit, wa_chat))
+            wa_chat = (
+                f"https://wa.me/{wa_digits}" if wa_digits else "#"
+            )
+
+          wa_call_val = str(row.get("WhatsApp Call", "")).strip()
+          wa_call_digits = "".join(filter(str.isdigit, wa_call_val))
+          wa_call_url = (
+              f"https://wa.me/{wa_call_digits}" if wa_call_digits else "#"
           )
-          st.markdown(
-              f"**WhatsApp Call:** [Voice Call](tel:{row.get('WhatsApp Call', '')})"
-          )
+
+          st.markdown(f"**WhatsApp Chat:** [Open Chat]({wa_chat})")
+          st.markdown(f"**WhatsApp Call:** [Voice/Video Call]({wa_call_url})")
 
           ig_handle = str(row.get("Instagram", "")).strip()
           ig_url = (
