@@ -12,7 +12,6 @@ def load_data():
   sheet_url = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRdR30A6c3cRpzS_yBSPP_LHWaRNE0YinscZfVf6xWeJfqjdvpPG_2JcVnTKp7dfUkl5NjR170Q1-lo/pub?output=csv"
   df = pd.read_csv(sheet_url)
   df.columns = df.columns.str.strip().str.lstrip("\ufeff")
-  # Replace all NaN/blank values with 'None' for a cleaner UI
   df = df.fillna("None")
   return df
 
@@ -142,9 +141,14 @@ elif app_mode == "Submit Update / Feedback":
         </div>
         <div style="margin-bottom: 15px;">
             <label style="display: block; font-weight: bold; margin-bottom: 5px;">Update Details / New Information:</label>
-            <textarea name="update_details" rows="5" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Specify what needs to be added or changed..."></textarea>
+            <textarea name="update_details" rows="6" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Example:
+- Phone Number: +1-555-9999
+- Blood Group: O+
+- Address: 789 Pine Road, City, State
+- Allergies: None
+- Emergency Contact: Jane Doe (+1-555-8888)"></textarea>
         </div>
         <button type="submit" style="background-color: #ff4b4b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Submit Request</button>
     </form>
     """
-  st.components.v1.html(form_html, height=450)
+  st.components.v1.html(form_html, height=500)
