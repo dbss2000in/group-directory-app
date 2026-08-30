@@ -121,10 +121,27 @@ if app_mode == "Directory":
 elif app_mode == "Submit Update / Feedback":
   st.header("📝 Request an Entry Update or Addition")
   st.markdown(
-      "Use the form below to submit modifications or add new members. Please"
-      " sign in with your verified email address when prompted."
+      "Fill out the form below to submit modifications or add new member"
+      " details. Submissions will be sent directly to your Formspree inbox."
   )
-  google_form_embed_url = (
-      "https://docs.google.com/forms/d/e/YOUR_FORM_EMBED_ID/viewform?embedded=true"
-  )
-  st.components.v1.iframe(google_form_embed_url, height=800, scrolling=True)
+
+  formspree_url = "https://formspree.io/f/xwlkpdwb"
+
+  form_html = f"""
+    <form action="{formspree_url}" method="POST" style="max-width: 600px; font-family: sans-serif;">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Your Email Address:</label>
+            <input type="email" name="email" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="name@example.com">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Full Name (Member):</label>
+            <input type="text" name="full_name" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="John Doe">
+        </div>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Update Details / New Information:</label>
+            <textarea name="update_details" rows="5" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Specify what needs to be added or changed..."></textarea>
+        </div>
+        <button type="submit" style="background-color: #ff4b4b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Submit Request</button>
+    </form>
+    """
+  st.components.v1.html(form_html, height=450)
