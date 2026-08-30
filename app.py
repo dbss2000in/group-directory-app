@@ -127,6 +127,27 @@ elif app_mode == "Submit Update / Feedback":
       " administrator."
   )
 
+  with st.expander(
+      "📋 View Database Fields & Example Format (Click to Expand)"
+  ):
+    st.markdown("""
+        When requesting an update or addition, please include as many of the following fields as applicable:
+        - **Full Name:** John Doe
+        - **Address:** 123 Maple Street, Springfield, IL 62701
+        - **Phone Number:** +1-555-0101
+        - **WhatsApp Call / Chat:** +1-555-0101 or https://wa.me/15550101
+        - **Instagram / Facebook:** @johndoe_art / fb.com/johndoe
+        - **Email / Website:** john.doe@example.com / https://johndoe.design
+        - **Blood Group:** O+
+        - **Allergies:** Penicillin
+        - **Medical Conditions:** Asthma
+        - **Medications:** Inhaler as needed
+        - **Emergency Contact Name & Relationship:** Jane Doe (Spouse)
+        - **Emergency Contact Phone:** +1-555-0199
+        - **Birthday & Timezone:** 1985-04-12 / America/Chicago
+        - **Notes:** Prefers text over calls.
+        """)
+
   formspree_url = "https://formspree.io/f/xwlkpdwb"
 
   form_html = f"""
@@ -141,12 +162,7 @@ elif app_mode == "Submit Update / Feedback":
         </div>
         <div style="margin-bottom: 15px;">
             <label style="display: block; font-weight: bold; margin-bottom: 5px;">Update Details / New Information:</label>
-            <textarea name="update_details" rows="6" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Example:
-- Phone Number: +1-555-9999
-- Blood Group: O+
-- Address: 789 Pine Road, City, State
-- Allergies: None
-- Emergency Contact: Jane Doe (+1-555-8888)"></textarea>
+            <textarea name="update_details" rows="6" required style="width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px;" placeholder="Type your update details here..."></textarea>
         </div>
         <button type="submit" style="background-color: #ff4b4b; color: white; padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer;">Submit Request</button>
     </form>
